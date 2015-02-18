@@ -4,3 +4,5 @@
 !scons/SConstruct
 !.gitignore
 *.o
+
+lib
