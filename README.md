@@ -2,7 +2,8 @@
 Cinder-Oni
 ----------
 
-OpenNI2 Cinder block
+OpenNI2 Cinder block without the binaries.
+Download the libraries from https://app.box.com/s/msh82mkq8wd7b17pxv33czi0b51ia9l9
 
 ###Updating the OpenNI2/NiTE2 lib on OS X
 In OpenNI2 2.3/NiTE 2.2 the install name of the librares are modified to make
