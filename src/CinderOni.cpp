@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2012-2014, Gabor Papp, All rights reserved.
+ Copyright (c) 2012-2015, Gabor Papp, All rights reserved.
 
  This code is intended for use with the Cinder C++ library:
  http://libcinder.org
@@ -327,28 +327,27 @@ OniCapture::OniCapture( const char *deviceUri, const Options &options )
 		throw ExcFailedOpenDevice();
 	}
 
-	// TODO: check the file streams, getSensorInfo does not work
-	/*
 	if ( mDeviceRef->isFile() )
 	{
-		if ( mDeviceRef->getSensorInfo( openni::SENSOR_DEPTH ) == NULL )
+		if ( mDeviceRef->getSensorInfo( openni::SENSOR_DEPTH ) != nullptr )
 		{
 			mDepthListener = std::shared_ptr< DepthListener >( new DepthListener( mDeviceRef ) );
 		}
-		if ( mDeviceRef->getSensorInfo( openni::SENSOR_COLOR ) != NULL )
+		if ( mDeviceRef->getSensorInfo( openni::SENSOR_COLOR ) != nullptr )
 		{
 			mColorListener = std::shared_ptr< ColorListener >( new ColorListener( mDeviceRef ) );
 		}
 	}
-	*/
-
-	if ( options.mEnableDepth )
+	else
 	{
-		mDepthListener = std::shared_ptr< DepthListener >( new DepthListener( mDeviceRef ) );
-	}
-	if ( options.mEnableColor )
-	{
-		mColorListener = std::shared_ptr< ColorListener >( new ColorListener( mDeviceRef ) );
+		if ( options.mEnableDepth )
+		{
+			mDepthListener = std::shared_ptr< DepthListener >( new DepthListener( mDeviceRef ) );
+		}
+		if ( options.mEnableColor )
+		{
+			mColorListener = std::shared_ptr< ColorListener >( new ColorListener( mDeviceRef ) );
+		}
 	}
 }
 
