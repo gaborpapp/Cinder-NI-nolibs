@@ -9,7 +9,7 @@
 #define _NITE_H_
 
 #include "NiteCAPI.h"
-#include <OpenNI.h>
+#include "OpenNI.h"
 
 // Summary of use cases, modules, facades
 

@@ -8,7 +8,7 @@
 #ifndef _NITE_C_TYPES_H_
 #define _NITE_C_TYPES_H_
 
-#include <OniCTypes.h>
+#include "OniCTypes.h"
 #include "NiteCEnums.h"
 
 typedef short int NiteUserId;

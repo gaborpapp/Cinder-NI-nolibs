@@ -5,7 +5,7 @@
 *                                                                              *
 *******************************************************************************/
 
-#include <OniPlatform.h>
+#include "OniPlatform.h"
 
 #define NITE_VERSION_MAJOR		2
 #define NITE_VERSION_MINOR		2

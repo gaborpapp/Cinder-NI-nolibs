@@ -5,8 +5,8 @@
 *                                                                              *
 *******************************************************************************/
 
-#include <OniPlatform.h>
-#include <OniCAPI.h>
+#include "OniPlatform.h"
+#include "OniCAPI.h"
 #include "NiteCTypes.h"
 #include "NiteVersion.h"
 
