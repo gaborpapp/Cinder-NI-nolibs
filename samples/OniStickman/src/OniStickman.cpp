@@ -1,5 +1,5 @@
 /*
- Copyright (C) 2012-2014 Gabor Papp
+ Copyright (C) 2012-2015 Gabor Papp
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 #include "cinder/Camera.h"
 #include "cinder/Cinder.h"
 #include "cinder/Quaternion.h"
-#include "cinder/app/AppBasic.h"
+#include "cinder/app/App.h"
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
 #include "cinder/gl/Texture.h"
@@ -48,16 +48,16 @@ class Bone : public Node
 	}
 };
 
-class OniStickmanApp : public AppBasic,
+class OniStickmanApp : public App,
 	public nite::UserTracker::NewFrameListener
 {
  public:
-	void prepareSettings( Settings *settings );
-	void setup();
-	void shutdown();
+	static void prepareSettings( Settings *settings );
+	void setup() override;
+	void cleanup() override;
 
-	void update();
-	void draw();
+	void update() override;
+	void draw() override;
 
  private:
 	mndl::oni::OniCaptureRef mOniCaptureRef;
@@ -83,7 +83,7 @@ void OniStickmanApp::prepareSettings(Settings *settings)
 void OniStickmanApp::setup()
 {
 #ifdef CINDER_MAC
-	fs::path appPath = app::getAppPath() / "Contents/MacOS/";
+	fs::path appPath = app::getAppPath() / "OniStickman.app/Contents/MacOS/";
 	chdir( appPath.string().c_str() );
 #endif
 	if ( openni::OpenNI::initialize() != openni::STATUS_OK )
@@ -161,7 +161,7 @@ void OniStickmanApp::setup()
 	gl::enableDepthWrite();
 }
 
-void OniStickmanApp::shutdown()
+void OniStickmanApp::cleanup()
 {
 	if ( mUserTrackerRef )
 	{
@@ -257,4 +257,4 @@ void OniStickmanApp::draw()
 	}
 }
 
-CINDER_APP_BASIC( OniStickmanApp, RendererGl )
+CINDER_APP( OniStickmanApp, RendererGl, OniStickmanApp::prepareSettings )

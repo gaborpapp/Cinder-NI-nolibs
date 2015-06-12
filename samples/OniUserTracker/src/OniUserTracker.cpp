@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2012-2014, Gabor Papp
+ Copyright (c) 2012-2015, Gabor Papp
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #include "cinder/Cinder.h"
 #include "cinder/Thread.h"
 #include "cinder/Utilities.h"
-#include "cinder/app/AppBasic.h"
+#include "cinder/app/App.h"
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
 #include "cinder/gl/Texture.h"
@@ -33,15 +33,15 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-class OniUserTrackerApp : public AppBasic
+class OniUserTrackerApp : public App
 {
  public:
-	void prepareSettings( Settings *settings );
-	void setup();
-	void shutdown();
+	static void prepareSettings( Settings *settings );
+	void setup() override;
+	void cleanup() override;
 
-	void update();
-	void draw();
+	void update() override;
+	void draw() override;
 
  private:
 	mndl::oni::OniCaptureRef mOniCaptureRef;
@@ -59,7 +59,7 @@ void OniUserTrackerApp::setup()
 {
 	// limitation of NiTE 2.2 on OS X, ini and data searchpath issue
 #ifdef CINDER_MAC
-	fs::path appPath = app::getAppPath() / "Contents/MacOS/";
+	fs::path appPath = app::getAppPath() / "OniUserTracker.app/Contents/MacOS/";
 	chdir( appPath.string().c_str() );
 #endif
 	if ( openni::OpenNI::initialize() != openni::STATUS_OK )
@@ -93,7 +93,7 @@ void OniUserTrackerApp::setup()
 	mOniCaptureRef->start();
 }
 
-void OniUserTrackerApp::shutdown()
+void OniUserTrackerApp::cleanup()
 {
 	if ( mUserTrackerRef )
 	{
@@ -184,4 +184,4 @@ void OniUserTrackerApp::draw()
 	}
 }
 
-CINDER_APP_BASIC( OniUserTrackerApp, RendererGl )
+CINDER_APP( OniUserTrackerApp, RendererGl, OniUserTrackerApp::prepareSettings )

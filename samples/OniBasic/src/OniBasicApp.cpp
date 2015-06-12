@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2012-2014, Gabor Papp
+ Copyright (c) 2012-2015, Gabor Papp
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 */
 
 #include "cinder/Cinder.h"
-#include "cinder/app/AppBasic.h"
+#include "cinder/app/App.h"
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
 #include "cinder/gl/Texture.h"
@@ -27,17 +27,17 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-class OniBasicApp : public AppBasic
+class OniBasicApp : public App
 {
  public:
-	void prepareSettings( Settings *settings );
-	void setup();
-	void shutdown();
+	static void prepareSettings( Settings *settings );
+	void setup() override;
+	void cleanup() override;
 
-	void update();
-	void draw();
+	void update() override;
+	void draw() override;
 
-	void mouseUp( MouseEvent event );
+	void mouseUp( MouseEvent event ) override;
 
  private:
 	mndl::oni::OniCaptureRef mOniCaptureRef;
@@ -91,7 +91,7 @@ void OniBasicApp::setup()
 	mOniCaptureRef->start();
 }
 
-void OniBasicApp::shutdown()
+void OniBasicApp::cleanup()
 {
 	mOniCaptureRef->stop();
 	openni::OpenNI::shutdown();
@@ -131,4 +131,4 @@ void OniBasicApp::mouseUp( MouseEvent event )
 	*/
 }
 
-CINDER_APP_BASIC( OniBasicApp, RendererGl )
+CINDER_APP( OniBasicApp, RendererGl, &OniBasicApp::prepareSettings )

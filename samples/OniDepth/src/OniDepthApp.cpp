@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2012-2014, Gabor Papp
+ Copyright (c) 2012-2015, Gabor Papp
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 */
 
 #include "cinder/Cinder.h"
-#include "cinder/app/AppBasic.h"
+#include "cinder/app/App.h"
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
 #include "cinder/gl/Texture.h"
@@ -28,15 +28,15 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-class OniDepthApp : public AppBasic
+class OniDepthApp : public App
 {
  public:
-	void prepareSettings( Settings *settings );
-	void setup();
-	void shutdown();
+	static void prepareSettings( Settings *settings );
+	void setup() override;
+	void cleanup() override;
 
-	void update();
-	void draw();
+	void update() override;
+	void draw() override;
 
  private:
 	mndl::oni::OniCaptureRef mOniCaptureRef;
@@ -89,7 +89,7 @@ void OniDepthApp::setup()
 			[ & ]() { mOniCaptureRef->invertDepth( mInvertDepth ); } );
 }
 
-void OniDepthApp::shutdown()
+void OniDepthApp::cleanup()
 {
 	mOniCaptureRef->stop();
 	openni::OpenNI::shutdown();
@@ -117,4 +117,4 @@ void OniDepthApp::draw()
 	mParams->draw();
 }
 
-CINDER_APP_BASIC( OniDepthApp, RendererGl )
+CINDER_APP( OniDepthApp, RendererGl, OniDepthApp::prepareSettings )
