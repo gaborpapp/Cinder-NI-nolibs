@@ -148,6 +148,7 @@ void OniCapture::DepthListener::stop()
 {
 	if ( mDepthStreamRef->isValid() )
 	{
+		std::lock_guard< std::recursive_mutex > lock( mMutex );
 		mDepthStreamRef->stop();
 		mDepthStreamRef->removeNewFrameListener( this );
 		mNewDepthFrame = false;
@@ -277,6 +278,7 @@ void OniCapture::ColorListener::stop()
 {
 	if ( mColorStreamRef->isValid() )
 	{
+		std::lock_guard< std::recursive_mutex > lock( mMutex );
 		mColorStreamRef->stop();
 		mColorStreamRef->removeNewFrameListener( this );
 		mNewColorFrame = false;
