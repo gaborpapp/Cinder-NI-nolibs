@@ -131,8 +131,15 @@ class OniCapture
 	ci::ImageSourceRef getDepthImage();
 	ci::ImageSourceRef getColorImage();
 
-	void enableDepthHistogram( bool enable = true );
-	bool isDepthHistogramEnabled() const;
+	enum class DepthMode
+	{
+		SCALED,
+		HISTOGRAM,
+		RAW
+	};
+
+	void setDepthMode( DepthMode mode );
+	DepthMode getDepthMode() const;
 
 	//! Pixels closer to the camera are brighter if \a invert is true.
 	void invertDepth( bool invert = true );
@@ -163,7 +170,7 @@ class OniCapture
 		BufferManager< uint16_t > mDepthBuffers;
 		int mDepthWidth, mDepthHeight;
 		bool mNewDepthFrame;
-		bool mDepthHistogramEnabled;
+		OniCapture::DepthMode mDepthMode;
 		bool mDepthInverted;
 
 		void calcHistogram( const uint16_t *depth );

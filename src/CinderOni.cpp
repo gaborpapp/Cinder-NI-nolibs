@@ -101,7 +101,7 @@ class ImageSourceOniColor : public ci::ImageSource
 };
 
 OniCapture::DepthListener::DepthListener( std::shared_ptr< openni::Device > deviceRef ) :
-	mNewDepthFrame( false ), mDepthHistogramEnabled( false ), mDepthInverted( false )
+	mNewDepthFrame( false ), mDepthMode( DepthMode::SCALED ), mDepthInverted( false )
 {
 	mDepthStreamRef = std::shared_ptr< openni::VideoStream >( new openni::VideoStream() );
 	if ( mDepthStreamRef->create( *deviceRef.get(), openni::SENSOR_DEPTH ) )
@@ -171,26 +171,41 @@ void OniCapture::DepthListener::onNewFrame( openni::VideoStream &videoStream )
 	mDepthBuffers.derefActiveBuffer();
 	uint16_t *destPixels = mDepthBuffers.getNewBuffer();
 
-	if ( ! mDepthHistogramEnabled )
+	switch ( (int)mDepthMode )
 	{
-		const uint32_t depthScale = 0xffff0000 / ( maxDepthValue - minDepthValue );
-		for ( size_t p = 0; p < mDepthWidth * mDepthHeight; ++p )
+		case (int)DepthMode::SCALED:
 		{
-			uint32_t v = depth[ p ] - minDepthValue;
-			destPixels[ p ] = ( depthScale * v ) >> 16;
-			if ( mDepthInverted && ( v != 0 ) )
+			const uint32_t depthScale = 0xffff0000 / ( maxDepthValue - minDepthValue );
+			for ( size_t p = 0; p < mDepthWidth * mDepthHeight; ++p )
 			{
-				destPixels[ p ] = 0xffff - destPixels[ p ];
+				uint32_t v = depth[ p ] - minDepthValue;
+				destPixels[ p ] = ( depthScale * v ) >> 16;
+				if ( mDepthInverted && ( v != 0 ) )
+				{
+					destPixels[ p ] = 0xffff - destPixels[ p ];
+				}
 			}
+			break;
 		}
-	}
-	else
-	{
-		calcHistogram( depth );
-		for ( size_t p = 0; p < mDepthWidth * mDepthHeight; ++p )
+
+		case (int)DepthMode::HISTOGRAM:
 		{
-			destPixels[ p ] = mDepthHistogram[ depth[ p ] ] * 0xffff;
+			calcHistogram( depth );
+			for ( size_t p = 0; p < mDepthWidth * mDepthHeight; ++p )
+			{
+				destPixels[ p ] = mDepthHistogram[ depth[ p ] ] * 0xffff;
+			}
+			break;
 		}
+
+		case (int)DepthMode::RAW:
+		{
+			memcpy( destPixels, depth, mDepthWidth * mDepthHeight * sizeof( uint16_t ) );
+			break;
+		}
+
+		default:
+			break;
 	}
 
 	mDepthBuffers.setActiveBuffer( destPixels );
@@ -438,23 +453,23 @@ ci::ImageSourceRef OniCapture::getColorImage()
 				mColorListener->mColorWidth, mColorListener->mColorHeight, mColorListener ) );
 }
 
-void OniCapture::enableDepthHistogram( bool enable )
+void OniCapture::setDepthMode( DepthMode mode )
 {
 	if ( mDepthListener )
 	{
 		std::lock_guard< std::recursive_mutex > lock( mDepthListener->mMutex );
-		mDepthListener->mDepthHistogramEnabled = enable;
+		mDepthListener->mDepthMode = mode;
 	}
 }
 
-bool OniCapture::isDepthHistogramEnabled() const
+OniCapture::DepthMode OniCapture::getDepthMode() const
 {
 	if ( mDepthListener )
 	{
 		std::lock_guard< std::recursive_mutex > lock( mDepthListener->mMutex );
-		return mDepthListener->mDepthHistogramEnabled;
+		return mDepthListener->mDepthMode;
 	}
-	return false;
+	return DepthMode::SCALED;
 }
 
 void OniCapture::invertDepth( bool invert )

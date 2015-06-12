@@ -42,7 +42,7 @@ class OniDepthApp : public App
 	mndl::oni::OniCaptureRef mOniCaptureRef;
 	gl::TextureRef mDepthTexture;
 
-	bool mEnableDepthHistogram = false;
+	mndl::oni::OniCapture::DepthMode mDepthMode = mndl::oni::OniCapture::DepthMode::SCALED;
 	bool mInvertDepth = false;
 
 	params::InterfaceGlRef mParams;
@@ -83,8 +83,8 @@ void OniDepthApp::setup()
 	mOniCaptureRef->start();
 
 	mParams = params::InterfaceGl::create( "Parameters", ivec2( 200, 300 ) );
-	mParams->addParam( "Depth histogram", &mEnableDepthHistogram ).updateFn(
-			[ & ]() { mOniCaptureRef->enableDepthHistogram( mEnableDepthHistogram ); } );
+	mParams->addParam( "Depth mode", { "scaled", "histogram", "raw" }, (int *)( &mDepthMode ) ).updateFn(
+			[ & ]() { mOniCaptureRef->setDepthMode( mDepthMode ); } );
 	mParams->addParam( "Invert depth", &mInvertDepth ).updateFn(
 			[ & ]() { mOniCaptureRef->invertDepth( mInvertDepth ); } );
 }
